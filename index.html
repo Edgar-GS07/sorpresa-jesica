@@ -146,6 +146,8 @@
 
         .main-scene {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; visibility: hidden; z-index: 1; overflow: hidden;
+            /* SE AÑADE ESTO PARA CENTRAR LA TARJETA CON FLEXBOX */
+            display: flex; justify-content: center; align-items: center;
         }
         .main-scene.active { opacity: 1; visibility: visible; }
 
@@ -181,7 +183,7 @@
         .bird { fill: #444; animation: flap 0.5s infinite alternate; }
 
         .field {
-            position: absolute; bottom: 0; width: 100%; height: 28%;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 28%;
             background: linear-gradient(to top, #4CAF50 0%, #8BC34A 100%);
             border-top-left-radius: 50% 15%; border-top-right-radius: 50% 15%; z-index: 4; transition: filter 2s;
         }
@@ -204,14 +206,17 @@
 
         /* Tarjeta de Mensaje (Centrada y Responsiva) */
         .message-card-final {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 95%; max-width: 580px;
+            /* SE CAMBIA EL POSICIONAMIENTO PARA EVITAR EL DESFASE */
+            position: relative; /* Cambio crucial */
+            width: 90%; /* Ajustado para dar más margen en móviles */
+            max-width: 580px;
             background: rgba(255, 255, 255, 0.35); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px; padding: clamp(20px, 5vw, 35px);
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 10;
             color: var(--text-dark); opacity: 0; animation: slideUpFade 2s ease forwards 1.5s; transition: all 2s;
-            max-height: 85vh; overflow-y: auto; /* Scroll en celulares */
+            max-height: 85vh; overflow-y: auto; /* Evita que se corte agregando scroll si es necesario */
+            margin: 0 auto; /* Asegura el centrado horizontal por si acaso */
         }
         body.night-mode .message-card-final {
             background: rgba(15, 20, 35, 0.5); border: 1px solid rgba(255, 215, 0, 0.2); color: #fff;
@@ -228,7 +233,7 @@
         body.night-mode .beating-heart { filter: drop-shadow(0 0 10px #d32f2f); }
 
         .flowers-container {
-            position: absolute; bottom: 3%; width: 100%; height: 50%;
+            position: absolute; bottom: 3%; left: 0; width: 100%; height: 50%;
             display: flex; justify-content: space-evenly; align-items: flex-end; pointer-events: none; z-index: 6;
         }
 
@@ -261,7 +266,7 @@
         .control-btn:hover { background: rgba(255,255,255,0.8); transform: scale(1.1); }
         body.night-mode .control-btn { background: rgba(15, 20, 35, 0.6); border-color: rgba(255, 215, 0, 0.4); color: #FFD700; }
 
-        .music-control { position: absolute; bottom: 20px; left: 20px; }
+        .music-control { position: absolute; top: 20px; left: 20px; right: auto;}
 
         @keyframes swirl-rotate { 100% { transform: rotate(360deg); } }
         @keyframes twinkle { 0% { opacity: 0.3; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1.2); } }
@@ -292,16 +297,16 @@
             .envelope-front { border-left: 110px solid transparent; border-right: 110px solid transparent; border-bottom: 75px solid #a82424; }
             .envelope-left { border-left: 110px solid #c22929; border-top: 70px solid transparent; border-bottom: 70px solid transparent; }
             .envelope-right { border-right: 110px solid #c22929; border-top: 70px solid transparent; border-bottom: 70px solid transparent; }
-            .polaroid { transform: scale(0.65) !important; }
-            .pol-1 { top: 5%; left: -15%; --rot: -8deg;} .pol-2 { top: 12%; right: -15%; --rot: 10deg; } .pol-3 { top: 25%; left: -5%; --rot: -5deg; }
-            .flower-wrapper { --scale: 0.75 !important; } .fw-2, .fw-4 { display: none; }
-            .message-card-final { width: 95%; top: 50%; padding: 20px; }
+            .polaroid { transform: scale(0.5) !important; } /* Polaroids más pequeñas en celular */
+            .pol-1 { top: 2%; left: -20%; --rot: -8deg;} .pol-2 { top: 10%; right: -25%; --rot: 10deg; } .pol-3 { top: 15%; left: -10%; --rot: -5deg; }
+            .flower-wrapper { --scale: 0.65 !important; } .fw-2, .fw-4 { display: none; }
+            .message-card-final { width: 90%; padding: 20px; }
             .intro-title { font-size: 2.5rem; }
         }
 
         @media (max-height: 650px) { /* Para celulares muy pequeños o en horizontal */
-            .message-card-final h2 { font-size: 2rem; margin-bottom: 10px; }
-            .message-card-final p { font-size: 0.95rem; margin-bottom: 10px; }
+            .message-card-final h2 { font-size: 1.8rem; margin-bottom: 10px; }
+            .message-card-final p { font-size: 0.9rem; margin-bottom: 8px; }
             .message-card-final { padding: 15px; }
         }
     </style>
@@ -629,3 +634,5 @@
     </script>
 </body>
 </html>
+
+Simplemente **reemplaza TODO el código de tu archivo `index.html` con este nuevo bloque** y haz commit. ¡Con esto quedará garantizado que se vea centrado en su celular!
