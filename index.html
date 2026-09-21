@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi Evangeline ✨</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-yellow: #FFD700;
+            --dark-yellow: #F5B041;
+            --stem-green: #2ecc71;
+            --text-dark: #3e2723;
+            --night-bg: #0b0c1b;
+            --night-purple: #231942;
+            --night-blue: #0f4c75;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Playfair Display', serif;
+            background-color: var(--night-bg);
+            transition: background-color 2s ease;
+        }
+
+        .intro-scene {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at bottom, var(--night-purple) 0%, var(--night-bg) 80%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1.5s ease, visibility 1.5s ease;
+            overflow: hidden;
+        }
+
+        .intro-scene.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Remolinos Van Gogh */
+        .van-gogh-swirl {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.6;
+            animation: swirl-rotate 25s infinite linear;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .swirl-1 { width: 40vw; height: 40vw; background: conic-gradient(from 0deg, #1f4287, #071e3d, #278ea5, #1f4287); top: -10%; left: -10%; }
+        .swirl-2 { width: 50vw; height: 50vw; background: conic-gradient(from 180deg, #2a0845, #6441a5, #2a0845); top: 20%; right: -20%; animation-direction: reverse; animation-duration: 35s;}
+
+        .star-glow {
+            position: absolute;
+            width: 4px; height: 4px; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.6);
+            animation: twinkle 3s infinite alternate; z-index: 1;
+        }
+
+        /* Sauces llorones */
+        .willow-vines {
+            position: absolute; top: 0; width: 100%; height: 35vh; pointer-events: none; z-index: 10;
+        }
+        .vine {
+            position: absolute; top: -20px; fill: #0a1711;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
+            animation: sway-vines 6s ease-in-out infinite alternate; transform-origin: top center;
+        }
+        .vine-left { left: -5%; width: 40%; }
+        .vine-right { right: -5%; width: 45%; animation-delay: -3s; }
+
+        .intro-content {
+            position: relative; z-index: 20; display: flex; flex-direction: column;
+            align-items: center; text-align: center; max-width: 650px; padding: 20px;
+        }
+
+        .envelope-container {
+            position: relative; width: 260px; height: 160px; margin-bottom: 40px;
+            animation: float-envelope 4s ease-in-out infinite alternate; cursor: pointer;
+        }
+
+        .envelope {
+            position: relative; width: 100%; height: 100%; background: #8b1e1e;
+            border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: transform 0.3s ease;
+        }
+        .envelope:hover { transform: scale(1.05); }
+
+        .envelope-flap {
+            position: absolute; top: 0; left: 0; width: 0; height: 0;
+            border-left: 130px solid transparent; border-right: 130px solid transparent; border-top: 90px solid #721616;
+            transform-origin: top; transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+            z-index: 3; border-radius: 8px 8px 0 0;
+        }
+
+        .envelope-front {
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-left: 130px solid transparent; border-right: 130px solid transparent; border-bottom: 85px solid #a82424;
+            z-index: 2; border-radius: 0 0 8px 8px;
+        }
+        .envelope-left { position: absolute; bottom: 0; left: 0; border-left: 130px solid #c22929; border-top: 80px solid transparent; border-bottom: 80px solid transparent; z-index: 2; border-radius: 0 0 0 8px; }
+        .envelope-right { position: absolute; bottom: 0; right: 0; border-right: 130px solid #c22929; border-top: 80px solid transparent; border-bottom: 80px solid transparent; z-index: 2; border-radius: 0 0 8px 0; }
+
+        .letter {
+            position: absolute; top: 15px; left: 20px; right: 20px; bottom: 15px; background: #fffdf5; border-radius: 5px;
+            display: flex; justify-content: center; align-items: center; font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #8b1e1e;
+            transition: transform 1s cubic-bezier(0.4, 0.0, 0.2, 1); z-index: 1; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .envelope-container.open .envelope-flap { transform: rotateX(180deg); z-index: 0; }
+        .envelope-container.open .letter { transform: translateY(-100px); z-index: 4; }
+
+        .intro-title {
+            color: #FFD700; font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 8vw, 4.5rem);
+            margin-bottom: 30px; text-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .elegant-btn {
+            background: linear-gradient(135deg, #FFD700, #F5B041); color: var(--text-dark); border: none; padding: 15px 45px;
+            font-size: 1.2rem; font-family: 'Playfair Display', serif; font-weight: 700; border-radius: 40px; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(245, 176, 65, 0.3); transition: all 0.4s ease; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .elegant-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 35px rgba(245, 176, 65, 0.5); }
+        .elegant-btn.fade-out { opacity: 0; transform: scale(0.8); pointer-events: none; }
+
+        #flashOverlay {
+            position: fixed; inset: 0; background: #fff; z-index: 150; opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
+        }
+        #flashOverlay.flash { opacity: 1; }
+
+        .main-scene {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; visibility: hidden; z-index: 1; overflow: hidden;
+        }
+        .main-scene.active { opacity: 1; visibility: visible; }
+
+        /* Capas de cielo para transición Día/Noche */
+        .sky-day, .sky-night { position: absolute; inset: 0; transition: opacity 2s ease; }
+        .sky-day { background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 40%, #FFF3E0 100%); z-index: 1; }
+        .sky-night { background: linear-gradient(to bottom, #0b0c1b 0%, #231942 50%, #0f4c75 100%); opacity: 0; z-index: 2; pointer-events: none; }
+        body.night-mode .sky-night { opacity: 1; }
+
+        .sun-moon {
+            position: absolute; top: 8%; right: 15%; width: 100px; height: 100px; border-radius: 50%;
+            background: #FFD700; box-shadow: 0 0 60px 20px rgba(255, 215, 0, 0.6);
+            transition: all 2s ease; z-index: 3; animation: pulse-celestial 4s infinite alternate;
+        }
+        body.night-mode .sun-moon {
+            background: #f4f6f0; box-shadow: 0 0 50px 15px rgba(255, 255, 255, 0.6);
+            box-shadow: inset -15px -15px 0 0 #e0e4d9, 0 0 50px 15px rgba(255, 255, 255, 0.5); /* Efecto luna creciente */
+        }
+
+        /* Nubes */
+        .clouds { position: absolute; top: 15%; width: 100%; z-index: 3; pointer-events: none; opacity: 0.8; transition: opacity 2s; }
+        body.night-mode .clouds { opacity: 0.3; filter: brightness(0.5); }
+        .cloud { position: absolute; background: #fff; border-radius: 50px; animation: float-cloud linear infinite; }
+        .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
+        .c1 { width: 120px; height: 40px; top: 20px; left: -150px; animation-duration: 40s; }
+        .c1::before { width: 60px; height: 60px; top: -30px; left: 15px; } .c1::after { width: 50px; height: 50px; top: -20px; right: 15px; }
+        .c2 { width: 180px; height: 50px; top: 100px; left: -200px; animation-duration: 60s; animation-delay: 15s; opacity: 0.6; transform: scale(0.8); }
+        .c2::before { width: 80px; height: 80px; top: -40px; left: 30px; } .c2::after { width: 70px; height: 70px; top: -30px; right: 30px; }
+
+        /* Pájaros */
+        .birds { position: absolute; top: 25%; left: -100px; z-index: 3; pointer-events: none; animation: fly-birds 25s linear infinite; }
+        body.night-mode .birds { opacity: 0; } /* Sin pájaros de noche */
+        .bird { fill: #444; animation: flap 0.5s infinite alternate; }
+
+        .field {
+            position: absolute; bottom: 0; width: 100%; height: 28%;
+            background: linear-gradient(to top, #4CAF50 0%, #8BC34A 100%);
+            border-top-left-radius: 50% 15%; border-top-right-radius: 50% 15%; z-index: 4; transition: filter 2s;
+        }
+        body.night-mode .field { filter: brightness(0.4) saturate(0.8); }
+
+        .polaroid-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        .polaroid {
+            position: absolute; background: #fff; padding: 10px 10px 40px 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); border-radius: 2px;
+            animation: float-polaroid 6s ease-in-out infinite alternate; pointer-events: auto;
+        }
+        body.night-mode .polaroid { filter: brightness(0.8); }
+        .polaroid img { width: 150px; height: 170px; object-fit: cover; transition: transform 0.3s; }
+        .polaroid:hover img { transform: scale(1.03); }
+        .polaroid::after { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(-3deg); width: 50px; height: 25px; background: rgba(255,255,255,0.7); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        
+        .pol-1 { top: 10%; left: 10%; transform: rotate(-8deg); animation-delay: 0s; }
+        .pol-2 { top: 20%; right: 10%; transform: rotate(10deg); animation-delay: 1.5s; }
+        .pol-3 { top: 40%; left: 15%; transform: rotate(-5deg); animation-delay: 0.8s; }
+
+        .message-card-final {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 580px;
+            background: rgba(255, 255, 255, 0.35); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px; padding: 35px;
+            text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 10;
+            color: var(--text-dark); opacity: 0; animation: slideUpFade 2s ease forwards 1.5s; transition: all 2s;
+        }
+        body.night-mode .message-card-final {
+            background: rgba(15, 20, 35, 0.5); border: 1px solid rgba(255, 215, 0, 0.2); color: #fff;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,215,0,0.05);
+        }
+
+        .message-card-final h2 { font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 6vw, 4rem); margin-bottom: 20px; color: #d32f2f; transition: color 2s; }
+        body.night-mode .message-card-final h2 { color: #FFD700; }
+        .message-card-final p { font-size: 1.2rem; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
+        body.night-mode .message-card-final p { font-weight: 400; color: #e0e0e0; }
+        
+        .beating-heart { display: inline-block; font-size: 2rem; color: #d32f2f; animation: heart-beat 1.5s infinite; }
+        body.night-mode .beating-heart { filter: drop-shadow(0 0 10px #d32f2f); }
+
+        .flowers-container {
+            position: absolute; bottom: 3%; width: 100%; height: 50%;
+            display: flex; justify-content: space-evenly; align-items: flex-end; pointer-events: none; z-index: 6;
+        }
+
+        .flower-wrapper { position: relative; transform-origin: bottom center; animation: sway 5s ease-in-out infinite alternate; transition: filter 2s; }
+        body.night-mode .flower-wrapper { filter: brightness(0.7); }
+        .flower-wrapper::after { content: ''; position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); width: 12px; height: 200px; background: linear-gradient(to right, #2E7D32, #4CAF50, #2E7D32); border-radius: 10px; z-index: -1; }
+        .leaf { position: absolute; width: 45px; height: 22px; background: #4CAF50; border-radius: 20px 0 20px 0; bottom: 70px; }
+        .leaf.left { left: -40px; transform: rotate(-30deg); }
+        .leaf.right { right: -40px; transform: rotate(30deg) scaleX(-1); bottom: 100px; }
+
+        .flower-svg { width: 140px; height: 140px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15)); animation: spin-flower 35s linear infinite; }
+        .fw-1 { animation-delay: 0s; transform: scale(0.9); } .fw-2 { animation-delay: 1.5s; transform: scale(1.15); margin-bottom: -15px; }
+        .fw-3 { animation-delay: 0.5s; transform: scale(1.1); margin-bottom: 15px; } .fw-4 { animation-delay: 2.2s; transform: scale(0.95); margin-bottom: 5px; }
+        .fw-5 { animation-delay: 1.1s; transform: scale(1.05); }
+
+        #particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 8; }
+
+        /* Controles (Música y Día/Noche) */
+        .ui-controls {
+            position: absolute; top: 20px; right: 20px; z-index: 50; display: flex; gap: 15px;
+            opacity: 0; visibility: hidden; transition: opacity 1s; pointer-events: none;
+        }
+        .main-scene.active ~ .ui-controls { opacity: 1; visibility: visible; pointer-events: auto; }
+        
+        .control-btn {
+            background: rgba(255,255,255,0.4); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.6);
+            width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-size: 1.2rem; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .control-btn:hover { background: rgba(255,255,255,0.8); transform: scale(1.1); }
+        body.night-mode .control-btn { background: rgba(15, 20, 35, 0.6); border-color: rgba(255, 215, 0, 0.4); color: #FFD700; }
+
+        .music-control { position: absolute; bottom: 20px; left: 20px; }
+
+        @keyframes swirl-rotate { 100% { transform: rotate(360deg); } }
+        @keyframes twinkle { 0% { opacity: 0.3; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1.2); } }
+        @keyframes sway-vines { 0% { transform: rotate(-3deg); } 100% { transform: rotate(3deg); } }
+        @keyframes float-envelope { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float-polaroid { 0% { transform: translateY(0) rotate(var(--rot, 0deg)); } 100% { transform: translateY(-15px) rotate(calc(var(--rot, 0deg) + 3deg)); } }
+        @keyframes sway { 0% { transform: rotate(-6deg) scale(var(--scale, 1)); } 100% { transform: rotate(6deg) scale(var(--scale, 1)); } }
+        @keyframes spin-flower { 100% { transform: rotate(360deg); } }
+        @keyframes pulse-celestial { 100% { transform: scale(1.05); } }
+        @keyframes heart-beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+        @keyframes float-cloud { 0% { transform: translateX(0); } 100% { transform: translateX(110vw); } }
+        @keyframes fly-birds { 0% { transform: translate(0, 0) scale(0.5); } 100% { transform: translate(120vw, -20vh) scale(1); } }
+        @keyframes flap { 0% { transform: scaleY(1); } 100% { transform: scaleY(0.4); } }
+
+        /* Luciérnagas de la noche */
+        .firefly {
+            position: absolute; width: 4px; height: 4px; background: #ccff00; border-radius: 50%;
+            box-shadow: 0 0 10px 3px rgba(204, 255, 0, 0.8); z-index: 12; pointer-events: none;
+            animation: float-firefly 8s infinite ease-in-out alternate, blink-firefly 2s infinite alternate;
+        }
+        @keyframes float-firefly { 0% { transform: translate(0, 0); } 100% { transform: translate(40px, -60px); } }
+        @keyframes blink-firefly { 0% { opacity: 0.1; } 100% { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .envelope-container { width: 220px; height: 140px; }
+            .envelope-flap { border-left: 110px solid transparent; border-right: 110px solid transparent; border-top: 80px solid #721616; }
+            .envelope-front { border-left: 110px solid transparent; border-right: 110px solid transparent; border-bottom: 75px solid #a82424; }
+            .envelope-left { border-left: 110px solid #c22929; border-top: 70px solid transparent; border-bottom: 70px solid transparent; }
+            .envelope-right { border-right: 110px solid #c22929; border-top: 70px solid transparent; border-bottom: 70px solid transparent; }
+            .polaroid { transform: scale(0.65) !important; }
+            .pol-1 { top: 5%; left: -15%; --rot: -8deg;} .pol-2 { top: 12%; right: -15%; --rot: 10deg; } .pol-3 { top: 25%; left: -5%; --rot: -5deg; }
+            .flower-wrapper { --scale: 0.75 !important; } .fw-2, .fw-4 { display: none; }
+            .message-card-final { width: 90%; top: 55%; padding: 25px; }
+            .intro-title { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="flashOverlay"></div>
+
+    <!-- AUDIO: Asegúrate de tener un archivo llamado evangeline.mp3 en la misma carpeta -->
+    <!-- Puedes probar el código tal cual, pero si no hay archivo no sonará -->
+    <audio id="bg-music" src="evangeline.mp3" loop></audio>
+
+    <div class="intro-scene" id="introScene">
+        <div class="van-gogh-swirl swirl-1"></div>
+        <div class="van-gogh-swirl swirl-2"></div>
+        <div id="stars-container"></div>
+        <div id="fireflies-night-container"></div>
+
+        <svg class="willow-vines vine-left" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M0,0 C20,10 40,-5 60,30 C70,45 55,70 65,95 C70,105 85,90 90,110 L0,110 Z" />
+            <path d="M0,0 C10,30 30,20 40,60 C45,80 30,95 40,120 L0,120 Z" />
+        </svg>
+        <svg class="willow-vines vine-right" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M100,0 C80,15 60,-5 40,40 C30,60 45,85 35,105 C30,115 15,100 10,120 L100,120 Z" />
+            <path d="M100,0 C90,30 70,20 60,60 C55,80 70,95 60,120 L100,120 Z" />
+        </svg>
+
+        <div class="intro-content">
+            <h1 class="intro-title">Tengo algo para ti...</h1>
+            
+            <div class="envelope-container" id="envelope" onclick="openSurprise()">
+                <div class="envelope">
+                    <div class="envelope-flap"></div>
+                    <div class="letter">✨</div>
+                    <div class="envelope-left"></div>
+                    <div class="envelope-right"></div>
+                    <div class="envelope-front"></div>
+                </div>
+            </div>
+            
+            <button class="elegant-btn" id="openBtn" onclick="openSurprise()">Abrir sorpresa ✨</button>
+        </div>
+    </div>
+
+    <div class="main-scene" id="mainScene">
+        <div class="sky-day"></div>
+        <div class="sky-night"></div>
+        <div class="sun-moon"></div>
+
+        <div class="clouds">
+            <div class="cloud c1"></div>
+            <div class="cloud c2"></div>
+        </div>
+
+        <svg class="birds" width="100" height="50" viewBox="0 0 100 50">
+            <path class="bird" d="M10,25 Q15,15 20,25 Q15,20 10,25 M20,25 Q25,15 30,25 Q25,20 20,25" />
+            <path class="bird" d="M35,15 Q40,5 45,15 Q40,10 35,15 M45,15 Q50,5 55,15 Q50,10 45,15" transform="scale(0.8) translate(10, 15)"/>
+        </svg>
+
+        <div id="fireflies-day-container"></div> <!-- Luciérnagas que aparecen en modo noche -->
+
+        <div class="polaroid-container">
+            <!-- Cambia 'foto1.jpg' por el nombre de tu foto -->
+            <div class="polaroid pol-1" style="--rot: -8deg;"><img src="https://picsum.photos/400/400?random=1" alt="Nosotros"></div>
+            <!-- Cambia 'foto2.jpg' por el nombre de tu foto -->
+            <div class="polaroid pol-2" style="--rot: 10deg;"><img src="https://picsum.photos/400/400?random=2" alt="Recuerdos"></div>
+            <!-- Cambia 'foto3.jpg' por el nombre de tu foto -->
+            <div class="polaroid pol-3" style="--rot: -5deg;"><img src="https://picsum.photos/400/400?random=3" alt="Amor"></div>
+        </div>
+
+        <canvas id="particle-canvas"></canvas>
+
+        <div class="message-card-final">
+            <h2>🌻 Para mi Evangeline 🌻</h2>
+            <p>El día de hoy no pudimos vernos pero siempre pienso en ti y es por eso que hice este detalle que aunque sea pequeño es con todo mi amor, cuando te vea te daré tus florecitas.</p>
+            <p>Gracias por darle vida a mi vida. <span class="beating-heart">💛</span></p>
+        </div>
+
+        <div class="field"></div>
+        
+        <div class="flowers-container">
+            <!-- Flores SVG Generadas -->
+            <div class="flower-wrapper fw-1" style="--scale: 0.9;">
+                <div class="leaf left"></div><div class="leaf right"></div>
+                <svg class="flower-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#FFD700" stroke="#F5B041" stroke-width="1.5"><circle cx="50" cy="18" r="16" /><circle cx="82" cy="50" r="16" /><circle cx="50" cy="82" r="16" /><circle cx="18" cy="50" r="16" /><circle cx="72" cy="28" r="16" /><circle cx="72" cy="72" r="16" /><circle cx="28" cy="72" r="16" /><circle cx="28" cy="28" r="16" /></g>
+                    <circle cx="50" cy="50" r="24" fill="#6d4c41" /><circle cx="50" cy="50" r="18" fill="#4e342e" stroke="#8d6e63" stroke-width="2" stroke-dasharray="3,3"/>
+                </svg>
+            </div>
+            <div class="flower-wrapper fw-2" style="--scale: 1.15;">
+                <div class="leaf left"></div>
+                <svg class="flower-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#FFC107" stroke="#FF9800" stroke-width="1.5"><circle cx="50" cy="18" r="16" /><circle cx="82" cy="50" r="16" /><circle cx="50" cy="82" r="16" /><circle cx="18" cy="50" r="16" /><circle cx="72" cy="28" r="16" /><circle cx="72" cy="72" r="16" /><circle cx="28" cy="72" r="16" /><circle cx="28" cy="28" r="16" /></g>
+                    <circle cx="50" cy="50" r="24" fill="#5d4037" /><circle cx="50" cy="50" r="18" fill="#3e2723" stroke="#795548" stroke-width="2" stroke-dasharray="3,3"/>
+                </svg>
+            </div>
+            <div class="flower-wrapper fw-3" style="--scale: 1.1;">
+                <div class="leaf left"></div><div class="leaf right"></div>
+                <svg class="flower-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#FFD700" stroke="#F5B041" stroke-width="1.5"><circle cx="50" cy="18" r="16" /><circle cx="82" cy="50" r="16" /><circle cx="50" cy="82" r="16" /><circle cx="18" cy="50" r="16" /><circle cx="72" cy="28" r="16" /><circle cx="72" cy="72" r="16" /><circle cx="28" cy="72" r="16" /><circle cx="28" cy="28" r="16" /></g>
+                    <circle cx="50" cy="50" r="24" fill="#6d4c41" /><circle cx="50" cy="50" r="18" fill="#4e342e" stroke="#8d6e63" stroke-width="2" stroke-dasharray="3,3"/>
+                </svg>
+            </div>
+            <div class="flower-wrapper fw-4" style="--scale: 0.95;">
+                <div class="leaf right"></div>
+                <svg class="flower-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#FFC107" stroke="#FF9800" stroke-width="1.5"><circle cx="50" cy="18" r="16" /><circle cx="82" cy="50" r="16" /><circle cx="50" cy="82" r="16" /><circle cx="18" cy="50" r="16" /><circle cx="72" cy="28" r="16" /><circle cx="72" cy="72" r="16" /><circle cx="28" cy="72" r="16" /><circle cx="28" cy="28" r="16" /></g>
+                    <circle cx="50" cy="50" r="24" fill="#5d4037" /><circle cx="50" cy="50" r="18" fill="#3e2723" stroke="#795548" stroke-width="2" stroke-dasharray="3,3"/>
+                </svg>
+            </div>
+            <div class="flower-wrapper fw-5" style="--scale: 1.05;">
+                <div class="leaf left"></div><div class="leaf right"></div>
+                <svg class="flower-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#FFD700" stroke="#F5B041" stroke-width="1.5"><circle cx="50" cy="18" r="16" /><circle cx="82" cy="50" r="16" /><circle cx="50" cy="82" r="16" /><circle cx="18" cy="50" r="16" /><circle cx="72" cy="28" r="16" /><circle cx="72" cy="72" r="16" /><circle cx="28" cy="72" r="16" /><circle cx="28" cy="28" r="16" /></g>
+                    <circle cx="50" cy="50" r="24" fill="#6d4c41" /><circle cx="50" cy="50" r="18" fill="#4e342e" stroke="#8d6e63" stroke-width="2" stroke-dasharray="3,3"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Controles -->
+    <div class="ui-controls">
+        <div class="control-btn" id="dayNightBtn" onclick="toggleDayNight()" title="Día/Noche">🌙</div>
+    </div>
+    <div class="ui-controls music-control">
+        <div class="control-btn" id="musicBtn" onclick="toggleMusic()" title="Música">🎶</div>
+    </div>
+
+    <script>
+        // --- EFECTOS NOCHE MÁGICA INICIAL ---
+        const starsContainer = document.getElementById('stars-container');
+        for (let i = 0; i < 60; i++) {
+            let star = document.createElement('div'); star.className = 'star-glow';
+            star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDelay = (Math.random() * 3) + 's'; starsContainer.appendChild(star);
+        }
+
+        const nightFireflies = document.getElementById('fireflies-night-container');
+        for (let i = 0; i < 20; i++) {
+            let ff = document.createElement('div'); ff.className = 'firefly';
+            ff.style.left = Math.random() * 100 + 'vw'; ff.style.top = Math.random() * 100 + 'vh';
+            ff.style.animationDelay = (Math.random() * 5) + 's'; nightFireflies.appendChild(ff);
+        }
+
+        // --- LÓGICA DE TRANSICIÓN ---
+        let isOpened = false;
+        const audio = document.getElementById('bg-music');
+        let isPlaying = false;
+
+        function openSurprise() {
+            if (isOpened) return;
+            isOpened = true;
+
+            const envelope = document.getElementById('envelope');
+            const introScene = document.getElementById('introScene');
+            const mainScene = document.getElementById('mainScene');
+            const btn = document.getElementById('openBtn');
+            const flash = document.getElementById('flashOverlay');
+
+            btn.classList.add('fade-out');
+            envelope.classList.add('open');
+
+            // Intentar reproducir música manejando correctamente la promesa
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    isPlaying = true;
+                    document.getElementById('musicBtn').innerText = '🎶';
+                }).catch(error => {
+                    console.log("Audio no pudo iniciar. Falta el archivo 'evangeline.mp3'.");
+                    isPlaying = false;
+                    document.getElementById('musicBtn').innerText = '🔇';
+                });
+            }
+
+            setTimeout(() => {
+                flash.classList.add('flash'); 
+                
+                setTimeout(() => {
+                    introScene.classList.add('hidden');
+                    document.body.style.backgroundColor = '#FFF3E0'; // Cambiar color base a día
+                    mainScene.classList.add('active'); 
+                    
+                    setTimeout(() => {
+                        flash.classList.remove('flash'); 
+                        initParticles(); 
+                        createDayFireflies(); // Preparar luciérnagas por si activa modo noche
+                    }, 500);
+                }, 1000);
+            }, 1800);
+        }
+
+        // --- CONTROLES UI ---
+        function toggleMusic() {
+            if (isPlaying) { 
+                audio.pause(); 
+                document.getElementById('musicBtn').innerText = '🔇'; 
+                isPlaying = false;
+            } else { 
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        document.getElementById('musicBtn').innerText = '🎶';
+                        isPlaying = true;
+                    }).catch(error => {
+                        console.log("No se encuentra el archivo de audio 'evangeline.mp3'.");
+                    });
+                }
+            }
+        }
+
+        function toggleDayNight() {
+            document.body.classList.toggle('night-mode');
+            const btn = document.getElementById('dayNightBtn');
+            if (document.body.classList.contains('night-mode')) {
+                btn.innerText = '☀️';
+            } else {
+                btn.innerText = '🌙';
+            }
+        }
+
+        function createDayFireflies() {
+            const container = document.getElementById('fireflies-day-container');
+            for (let i = 0; i < 25; i++) {
+                let ff = document.createElement('div'); ff.className = 'firefly';
+                ff.style.left = Math.random() * 100 + 'vw'; 
+                ff.style.top = (Math.random() * 40 + 60) + 'vh'; // Solo en la parte baja (campo)
+                ff.style.animationDelay = (Math.random() * 5) + 's'; 
+                ff.style.opacity = '0'; // Ocultas por defecto
+                container.appendChild(ff);
+            }
+        }
+
+        // Mostrar/Ocultar luciérnagas según modo noche
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if(mutation.attributeName === "class"){
+                    const ffs = document.querySelectorAll('#fireflies-day-container .firefly');
+                    const isNight = document.body.classList.contains('night-mode');
+                    ffs.forEach(ff => { ff.style.opacity = isNight ? '1' : '0'; });
+                }
+            });
+        });
+        observer.observe(document.body, { attributes: true });
+
+        // --- SISTEMA DE PÉTALOS Y POLVO MÁGICO (Canvas) ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let burstParticles = [];
+        
+        const isMobile = window.innerWidth <= 768;
+        const particleCount = isMobile ? 30 : 60; 
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Petal {
+            constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+            reset() {
+                this.x = Math.random() * canvas.width; this.y = -30;
+                this.size = Math.random() * 8 + 7; this.speed = Math.random() * 1.5 + 1.2; 
+                this.angle = Math.random() * Math.PI * 2; this.spin = (Math.random() - 0.5) * 0.15; 
+                this.drift = (Math.random() - 0.5) * 1.5; 
+                this.color1 = Math.random() > 0.5 ? "#FFD700" : "#FFC107"; this.color2 = "#FF9800";
+            }
+            update() {
+                this.y += this.speed; this.x += this.drift + Math.sin(this.angle) * 1; this.angle += this.spin;
+                if (this.y > canvas.height + 30 || this.x < -30 || this.x > canvas.width + 30) this.reset();
+            }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(this.size, -this.size, 0, -this.size * 2.5);
+                ctx.quadraticCurveTo(-this.size, -this.size, 0, 0);
+                let grad = ctx.createLinearGradient(0, -this.size * 2.5, 0, 0);
+                grad.addColorStop(0, this.color1); grad.addColorStop(1, this.color2);
+                ctx.fillStyle = grad; ctx.fill(); ctx.restore();
+            }
+        }
+
+        class BurstParticle {
+            constructor(x, y) {
+                this.x = x; this.y = y; this.size = Math.random() * 4 + 2;
+                const angle = Math.random() * Math.PI * 2; const speed = Math.random() * 6 + 2; 
+                this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+                this.life = 1.0; this.decay = Math.random() * 0.02 + 0.015; 
+                this.color = Math.random() > 0.5 ? '#FFD700' : '#FFF3E0';
+            }
+            update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
+            draw() {
+                ctx.save(); ctx.globalAlpha = Math.max(0, this.life); ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15; ctx.shadowColor = '#FFD700'; ctx.fill(); ctx.restore();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) particles.push(new Petal());
+            animateParticles();
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            
+            for (let i = burstParticles.length - 1; i >= 0; i--) {
+                let bp = burstParticles[i]; bp.update(); bp.draw();
+                if (bp.life <= 0) burstParticles.splice(i, 1);
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        // Interacción mágica: clic o toque en cualquier lugar
+        function createBurst(e) {
+            if (!document.getElementById('mainScene').classList.contains('active')) return;
+            const x = e.clientX || (e.touches && e.touches[0].clientX);
+            const y = e.clientY || (e.touches && e.touches[0].clientY);
+            if(x === undefined) return;
+            for(let i = 0; i < 25; i++) burstParticles.push(new BurstParticle(x, y));
+        }
+
+        document.getElementById('mainScene').addEventListener('click', createBurst);
+        document.getElementById('mainScene').addEventListener('touchstart', createBurst, {passive: true});
+
+    </script>
+</body>
+</html>
