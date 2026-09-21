@@ -177,7 +177,7 @@
 
         /* Pájaros */
         .birds { position: absolute; top: 25%; left: -100px; z-index: 3; pointer-events: none; animation: fly-birds 25s linear infinite; }
-        body.night-mode .birds { opacity: 0; } /* Sin pájaros de noche */
+        body.night-mode .birds { opacity: 0; }
         .bird { fill: #444; animation: flap 0.5s infinite alternate; }
 
         .field {
@@ -202,22 +202,26 @@
         .pol-2 { top: 20%; right: 10%; transform: rotate(10deg); animation-delay: 1.5s; }
         .pol-3 { top: 40%; left: 15%; transform: rotate(-5deg); animation-delay: 0.8s; }
 
+        /* Tarjeta de Mensaje (Centrada y Responsiva) */
         .message-card-final {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 580px;
+            width: 95%; max-width: 580px;
             background: rgba(255, 255, 255, 0.35); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px; padding: 35px;
-            text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px; padding: clamp(20px, 5vw, 35px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 10;
             color: var(--text-dark); opacity: 0; animation: slideUpFade 2s ease forwards 1.5s; transition: all 2s;
+            max-height: 85vh; overflow-y: auto; /* Scroll en celulares */
         }
         body.night-mode .message-card-final {
             background: rgba(15, 20, 35, 0.5); border: 1px solid rgba(255, 215, 0, 0.2); color: #fff;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,215,0,0.05);
         }
 
-        .message-card-final h2 { font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 6vw, 4rem); margin-bottom: 20px; color: #d32f2f; transition: color 2s; }
+        .message-card-final h2 { font-family: 'Great Vibes', cursive; font-size: clamp(2.2rem, 7vw, 4rem); margin-bottom: 15px; color: #d32f2f; transition: color 2s; }
         body.night-mode .message-card-final h2 { color: #FFD700; }
-        .message-card-final p { font-size: 1.2rem; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
+        .message-card-final p { font-size: clamp(0.95rem, 4vw, 1.2rem); line-height: 1.5; font-weight: 500; margin-bottom: 12px; }
+        .message-card-final p:last-child { margin-bottom: 0; }
         body.night-mode .message-card-final p { font-weight: 400; color: #e0e0e0; }
         
         .beating-heart { display: inline-block; font-size: 2rem; color: #d32f2f; animation: heart-beat 1.5s infinite; }
@@ -291,8 +295,14 @@
             .polaroid { transform: scale(0.65) !important; }
             .pol-1 { top: 5%; left: -15%; --rot: -8deg;} .pol-2 { top: 12%; right: -15%; --rot: 10deg; } .pol-3 { top: 25%; left: -5%; --rot: -5deg; }
             .flower-wrapper { --scale: 0.75 !important; } .fw-2, .fw-4 { display: none; }
-            .message-card-final { width: 90%; top: 55%; padding: 25px; }
+            .message-card-final { width: 95%; top: 50%; padding: 20px; }
             .intro-title { font-size: 2.5rem; }
+        }
+
+        @media (max-height: 650px) { /* Para celulares muy pequeños o en horizontal */
+            .message-card-final h2 { font-size: 2rem; margin-bottom: 10px; }
+            .message-card-final p { font-size: 0.95rem; margin-bottom: 10px; }
+            .message-card-final { padding: 15px; }
         }
     </style>
 </head>
@@ -300,8 +310,7 @@
 
     <div id="flashOverlay"></div>
 
-    <!-- AUDIO: Asegúrate de tener un archivo llamado evangeline.mp3 en la misma carpeta -->
-    <!-- Puedes probar el código tal cual, pero si no hay archivo no sonará -->
+    <!-- AUDIO -->
     <audio id="bg-music" src="evangeline.mp3" loop></audio>
 
     <div class="intro-scene" id="introScene">
@@ -351,11 +360,15 @@
             <path class="bird" d="M35,15 Q40,5 45,15 Q40,10 35,15 M45,15 Q50,5 55,15 Q50,10 45,15" transform="scale(0.8) translate(10, 15)"/>
         </svg>
 
+        <div class="fireflies-day-container" id="fireflies-day-container"></div>
+
         <div class="polaroid-container">
             <div class="polaroid pol-1" style="--rot: -8deg;"><img src="foto1.jpg" alt="Nosotros"></div>
             <div class="polaroid pol-2" style="--rot: 10deg;"><img src="foto2.jpg" alt="Recuerdos"></div>
             <div class="polaroid pol-3" style="--rot: -5deg;"><img src="foto3.jpg" alt="Amor"></div>
         </div>
+
+        <canvas id="particle-canvas"></canvas>
 
         <div class="message-card-final">
             <h2>🌻 Para mi Evangeline 🌻</h2>
@@ -447,14 +460,14 @@
             btn.classList.add('fade-out');
             envelope.classList.add('open');
 
-            // Intentar reproducir música manejando correctamente la promesa
+            // Reproducir música
             const playPromise = audio.play();
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
                     isPlaying = true;
                     document.getElementById('musicBtn').innerText = '🎶';
                 }).catch(error => {
-                    console.log("Audio no pudo iniciar. Falta el archivo 'evangeline.mp3'.");
+                    console.log("Audio en espera de interacción.");
                     isPlaying = false;
                     document.getElementById('musicBtn').innerText = '🔇';
                 });
@@ -465,13 +478,13 @@
                 
                 setTimeout(() => {
                     introScene.classList.add('hidden');
-                    document.body.style.backgroundColor = '#FFF3E0'; // Cambiar color base a día
+                    document.body.style.backgroundColor = '#FFF3E0'; 
                     mainScene.classList.add('active'); 
                     
                     setTimeout(() => {
                         flash.classList.remove('flash'); 
                         initParticles(); 
-                        createDayFireflies(); // Preparar luciérnagas por si activa modo noche
+                        createDayFireflies(); 
                     }, 500);
                 }, 1000);
             }, 1800);
@@ -490,7 +503,7 @@
                         document.getElementById('musicBtn').innerText = '🎶';
                         isPlaying = true;
                     }).catch(error => {
-                        console.log("No se encuentra el archivo de audio 'evangeline.mp3'.");
+                        console.log("No se pudo reproducir.");
                     });
                 }
             }
@@ -511,14 +524,13 @@
             for (let i = 0; i < 25; i++) {
                 let ff = document.createElement('div'); ff.className = 'firefly';
                 ff.style.left = Math.random() * 100 + 'vw'; 
-                ff.style.top = (Math.random() * 40 + 60) + 'vh'; // Solo en la parte baja (campo)
+                ff.style.top = (Math.random() * 40 + 60) + 'vh'; 
                 ff.style.animationDelay = (Math.random() * 5) + 's'; 
-                ff.style.opacity = '0'; // Ocultas por defecto
+                ff.style.opacity = '0'; 
                 container.appendChild(ff);
             }
         }
 
-        // Mostrar/Ocultar luciérnagas según modo noche
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if(mutation.attributeName === "class"){
@@ -530,7 +542,7 @@
         });
         observer.observe(document.body, { attributes: true });
 
-        // --- SISTEMA DE PÉTALOS Y POLVO MÁGICO (Canvas) ---
+        // --- SISTEMA DE PÉTALOS Y POLVO MÁGICO ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -603,7 +615,6 @@
             requestAnimationFrame(animateParticles);
         }
 
-        // Interacción mágica: clic o toque en cualquier lugar
         function createBurst(e) {
             if (!document.getElementById('mainScene').classList.contains('active')) return;
             const x = e.clientX || (e.touches && e.touches[0].clientX);
